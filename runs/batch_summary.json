@@ -1,0 +1,12 @@
+{
+  "total_runs": 28,
+  "successful": 28,
+  "failed": 0,
+  "converged": 28,
+  "success_rate": 100.0,
+  "convergence_rate": 100.0,
+  "total_time_seconds": 0.05359315872192383,
+  "average_time_per_run": 0.001914041382925851,
+  "num_workers": 4,
+  "completed_timestamp": "2025-12-27T17:36:41.492913"
+}

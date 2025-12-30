@@ -1,0 +1,270 @@
+======================================================================
+PHASE 12: PROJECT DELIVERABLES INVENTORY
+======================================================================
+
+Generated: 2025-12-27 19:35:35
+
+======================================================================
+SUMMARY STATISTICS
+======================================================================
+
+Total datasets: 13
+Total figures: 46
+Total scripts: 29
+
+Dataset size: 11.16 MB
+Figure size: 15.41 MB
+Script size: 0.36 MB
+Total project size: 26.93 MB
+
+======================================================================
+DATASETS
+======================================================================
+
+File: convergence_summary.csv
+  Path: outputs/tables/convergence_summary.csv
+  Size: 151.3 KB
+  Dimensions: 4,928 rows × 8 columns
+
+File: deliverables_inventory.txt
+  Path: outputs/tables/deliverables_inventory.txt
+  Size: 6.8 KB
+
+File: master_dataset.csv
+  Path: outputs/tables/master_dataset.csv
+  Size: 1157.1 KB
+  Dimensions: 4,928 rows × 21 columns
+
+File: master_dataset_classified.csv
+  Path: outputs/tables/master_dataset_classified.csv
+  Size: 1794.3 KB
+  Dimensions: 4,928 rows × 28 columns
+
+File: master_dataset_full.csv
+  Path: outputs/tables/master_dataset_full.csv
+  Size: 2769.9 KB
+  Dimensions: 4,928 rows × 41 columns
+
+File: master_dataset_with_derived.csv
+  Path: outputs/tables/master_dataset_with_derived.csv
+  Size: 3499.1 KB
+  Dimensions: 4,928 rows × 49 columns
+
+File: mix_designs.csv
+  Path: outputs/tables/mix_designs.csv
+  Size: 556.7 KB
+  Dimensions: 4,928 rows × 12 columns
+
+File: mix_designs_with_compositions.csv
+  Path: outputs/tables/mix_designs_with_compositions.csv
+  Size: 1486.7 KB
+  Dimensions: 4,928 rows × 27 columns
+
+File: phase_statistics.csv
+  Path: outputs/tables/phase_statistics.csv
+  Size: 0.8 KB
+  Dimensions: 5 rows × 10 columns
+
+File: reaction_path_data_R0.6_fFA0.1.csv
+  Path: outputs/tables/reaction_paths/reaction_path_data_R0.6_fFA0.1.csv
+  Size: 1.0 KB
+  Dimensions: 7 rows × 12 columns
+
+File: reaction_path_data_R0.6_fFA0.5.csv
+  Path: outputs/tables/reaction_paths/reaction_path_data_R0.6_fFA0.5.csv
+  Size: 1.0 KB
+  Dimensions: 7 rows × 12 columns
+
+File: reaction_path_data_R0.6_fFA0.9.csv
+  Path: outputs/tables/reaction_paths/reaction_path_data_R0.6_fFA0.9.csv
+  Size: 1.0 KB
+  Dimensions: 7 rows × 12 columns
+
+File: validation_report.txt
+  Path: outputs/tables/validation_report.txt
+  Size: 1.0 KB
+
+======================================================================
+FIGURES
+======================================================================
+
+FIGURES:
+  - phase2_verification.png (161.7 KB)
+
+PHASE_MAPS:
+  - phase_map_R0.3_wSS3pct_wb1.4_carbonation_state.png (192.6 KB)
+  - phase_map_R0.3_wSS3pct_wb1.4_phase_diagram_class.png (187.1 KB)
+  - phase_map_R0.6_carbonation_state.png (200.5 KB)
+  - phase_map_R0.6_dominant_phase_by_mass.png (191.6 KB)
+  - phase_map_R0.6_pH_regime.png (219.9 KB)
+  - phase_map_R0.6_phase_diagram_class.png (200.0 KB)
+  - phase_map_R0.6_wSS3pct_wb1.4_carbonation_state.png (200.5 KB)
+  - phase_map_R0.6_wSS3pct_wb1.4_phase_diagram_class.png (200.0 KB)
+  - phase_map_R0.9_wSS3pct_wb1.4_carbonation_state.png (214.4 KB)
+  - phase_map_R0.9_wSS3pct_wb1.4_phase_diagram_class.png (199.5 KB)
+  - phase_map_R1.2_wSS3pct_wb1.4_carbonation_state.png (213.3 KB)
+  - phase_map_R1.2_wSS3pct_wb1.4_phase_diagram_class.png (198.3 KB)
+  - phase_map_comparison_all_R.png (280.7 KB)
+
+REACTION_PATHS:
+  - reaction_path_R0.6_fFA0.1_pH.png (361.4 KB)
+  - reaction_path_R0.6_fFA0.1_phases.png (250.3 KB)
+  - reaction_path_R0.6_fFA0.5_pH.png (357.6 KB)
+  - reaction_path_R0.6_fFA0.5_phases.png (245.6 KB)
+  - reaction_path_R0.6_fFA0.9_pH.png (361.1 KB)
+  - reaction_path_R0.6_fFA0.9_phases.png (249.9 KB)
+  - reaction_paths_comparison_R0.6.png (603.5 KB)
+
+TERNARY_DIAGRAMS:
+  - ternary_R0.3_yCO220pct_wSS3pct_wb1.4_phase_diagram_class.png (502.7 KB)
+  - ternary_R0.6_yCO20pct_wSS3pct_wb1.4_carbonation_state.png (508.5 KB)
+  - ternary_R0.6_yCO20pct_wSS3pct_wb1.4_phase_diagram_class.png (509.9 KB)
+  - ternary_R0.6_yCO220pct_wSS3pct_wb1.4_carbonation_state.png (507.9 KB)
+  - ternary_R0.6_yCO220pct_wSS3pct_wb1.4_phase_diagram_class.png (509.7 KB)
+  - ternary_R0.6_yCO240pct_wSS3pct_wb1.4_carbonation_state.png (501.9 KB)
+  - ternary_R0.6_yCO240pct_wSS3pct_wb1.4_phase_diagram_class.png (503.1 KB)
+  - ternary_R0.9_yCO220pct_wSS3pct_wb1.4_phase_diagram_class.png (512.0 KB)
+  - ternary_R1.2_yCO220pct_wSS3pct_wb1.4_phase_diagram_class.png (511.6 KB)
+  - ternary_comparison_R0.6_phase_diagram_class.png (1374.6 KB)
+
+TRENDS:
+  - calcite_vs_fFA_R0.6_yCO20pct.png (154.3 KB)
+  - calcite_vs_fFA_R0.6_yCO220pct.png (160.9 KB)
+  - calcite_vs_fFA_R0.6_yCO240pct.png (179.5 KB)
+  - calcite_vs_yCO2_R0.6_fFA0.0.png (237.3 KB)
+  - calcite_vs_yCO2_R0.6_fFA0.3.png (237.3 KB)
+  - calcite_vs_yCO2_R0.6_fFA0.6.png (236.3 KB)
+  - calcite_vs_yCO2_R0.6_fFA0.9.png (237.5 KB)
+  - phases_vs_fFA_R0.6_yCO220pct.png (329.0 KB)
+  - phases_vs_fFA_multi_panel.png (1044.5 KB)
+  - phases_vs_yCO2_R0.6_fFA0.5.png (220.7 KB)
+  - phases_vs_yCO2_all_R_fFA0.5.png (572.4 KB)
+
+VALIDATION:
+  - validation_CSH_vs_silica.png (562.1 KB)
+  - validation_calcite_vs_CO2.png (159.3 KB)
+  - validation_pH_distribution.png (96.4 KB)
+  - validation_phase_occurrence.png (119.2 KB)
+
+======================================================================
+SCRIPTS
+======================================================================
+
+File: __init__.py
+  Lines: 26
+  Size: 0.5 KB
+
+File: config.py
+  Lines: 247
+  Size: 8.5 KB
+
+File: data_aggregator.py
+  Lines: 361
+  Size: 13.7 KB
+
+File: deliverables_manager.py
+  Lines: 585
+  Size: 19.1 KB
+
+File: mix_design_generator.py
+  Lines: 248
+  Size: 7.9 KB
+
+File: oxide_calculator.py
+  Lines: 432
+  Size: 14.1 KB
+
+File: phase_classifier.py
+  Lines: 441
+  Size: 15.4 KB
+
+File: phase_map_plotter.py
+  Lines: 480
+  Size: 17.2 KB
+
+File: reaction_path_plotter.py
+  Lines: 437
+  Size: 16.1 KB
+
+File: ternary_diagram_plotter.py
+  Lines: 465
+  Size: 16.9 KB
+
+File: test_environment.py
+  Lines: 213
+  Size: 6.3 KB
+
+File: trend_plotter.py
+  Lines: 547
+  Size: 19.4 KB
+
+File: validation.py
+  Lines: 799
+  Size: 30.7 KB
+
+File: verify_phase10.py
+  Lines: 518
+  Size: 16.4 KB
+
+File: verify_phase11.py
+  Lines: 449
+  Size: 13.1 KB
+
+File: verify_phase2.py
+  Lines: 261
+  Size: 8.1 KB
+
+File: verify_phase3.py
+  Lines: 329
+  Size: 10.2 KB
+
+File: verify_phase4.py
+  Lines: 291
+  Size: 9.0 KB
+
+File: verify_phase4_final.py
+  Lines: 201
+  Size: 6.5 KB
+
+File: verify_phase5.py
+  Lines: 366
+  Size: 11.8 KB
+
+File: verify_phase6.py
+  Lines: 420
+  Size: 13.9 KB
+
+File: verify_phase7.py
+  Lines: 321
+  Size: 10.6 KB
+
+File: verify_phase8.py
+  Lines: 339
+  Size: 11.4 KB
+
+File: verify_phase9.py
+  Lines: 361
+  Size: 11.5 KB
+
+File: xgems_batch_controller.py
+  Lines: 435
+  Size: 15.1 KB
+
+File: xgems_equilibrium_engine.py
+  Lines: 371
+  Size: 14.1 KB
+
+File: xgems_input_writer.py
+  Lines: 358
+  Size: 10.7 KB
+
+File: xgems_output_parser.py
+  Lines: 275
+  Size: 9.4 KB
+
+File: xgems_template.py
+  Lines: 373
+  Size: 10.7 KB
+
+Total lines of code: 10,949
+

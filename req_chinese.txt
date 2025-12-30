@@ -1,0 +1,200 @@
+时间：截至时间12月28号前
+料浆系统
+粉煤灰+水泥+硅酸钠+煤矸石+水+CO2
+1.	胶砂比：【(水泥 + 粉煤灰) / 煤矸石】的质量比。取值：0.3, 0.6, 0.9, 1.2。
+2.	粉煤灰掺量：【粉煤灰 / (水泥 + 粉煤灰)】的质量比。取值：0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0。
+3.	CO₂浓度：气相中CO₂的体积百分比。取值：0%, 15%, 20%, 25%, 30%, 35%, 40%。
+固定条件：温度 25°C，总压 1 atm（密闭系统）
+4. 硅酸钠占料浆总质量2~5%，间隔1%
+5. 水胶比：【水/（水泥+粉煤灰）】的质量比。取值1.1；1.4；1.7；2.0
+要求：计算每个变量组合下，体系达到热力学平衡后的状态
+1.	稳定相清单与含量：
+对于每一个(胶砂比，粉煤灰掺量，CO₂浓度) 组合，输出所有稳定存在的固体矿物相（如方解石、C-S-H、硅胶等）及其质量或摩尔量。
+2.	关键相图（二维）：
+类型A（相分布图）：固定一个胶砂比（例如0.6），以粉煤灰掺量为X轴，CO₂浓度为Y轴，用不同颜色或符号在图中标出每个坐标点对应的主导稳定相，从而形成“相稳定区域图”。
+类型B（组成三角图）：在固定CO₂浓度和胶砂比的截面上，绘制以主要组分（如CaO-SiO₂-Al₂O₃）为顶点的三角相图，显示相区划分。
+3.	产物演化趋势图：
+固定胶砂比和粉煤灰掺量，绘制关键产物（如方解石）的质量分数随CO₂浓度升高的变化曲线。固定胶砂比和CO₂浓度，绘制关键产物含量 随粉煤灰掺量变化的曲线。
+4.	反应路径模拟（针对少数典型配比）：
+选择2-3个关键配比，模拟逐步碳化过程（如逐步增加CO₂量），输出各相含量随反应进度（或CO₂注入量）变化的演化曲线，以观察相变序列。
+
+XRF
+煤矸石
+SiO₂：57.74 wt%
+Al₂O₃：20.58 wt%
+Fe₂O₃：4.31 wt% 
+CaO：0.20 wt% 
+MgO：1.00 wt%
+K₂O：2.76 wt% 
+水泥
+SiO₂：19.76
+Al₂O₃：11.47
+Fe₂O₃：0.50
+CaO：45.63
+MgO：6.27
+SO₃：13.68
+粉煤灰
+SiO₂：52.61
+Al₂O₃：12.60 
+Fe₂O₃：8.24
+CaO：18.23 
+MgO：1.47 
+K₂O：1.44
+2、硅酸钠的组成
+Mr = 212.14
+Na₂O 含量 ≈ 28–30 wt%
+Na₂O 与 SiO₂ 的摩尔比 ≈ 1.03
+Na₂O ≈ 29.2 wt%
+SiO₂ ≈ 29.2 wt%
+H₂O ≈ 41.6 wt%
+XRD
+ 
+煤矸石	粉煤灰	水泥
+
+
+[Project Task Brief] GEMS/CemGEMS Thermodynamic Modeling:
+Carbonation Equilibrium + Phase Diagrams + Reaction Pathways for a Composite Binder System
+
+0. Basic Information
+- Field/Topic: Resources & Environmental Engineering
+- Deadline: Delivery before 2025-12-28
+- System: Slurry system
+Fly ash + Cement + Sodium silicate + Coal gangue + Water + CO₂
+- Fixed conditions: T = 25°C; P_total = 1 atm; Closed system
+
+1. Project Objectives (What you need to complete)
+Under different mix proportions and CO₂ conditions, use GEMS (or an equivalent GEM-Selektor/CemGEMS workflow) to compute:
+(1) Equilibrium stable phase assemblage and phase amounts (mainly solid phases)
+(2) Key 2D phase diagrams (phase map + ternary diagram)
+(3) Trend curves of key product contents versus variables
+(4) Stepwise carbonation reaction pathways for 2–3 representative mix designs (phase transformation sequence / evolution curves)
+
+2. Independent Variables and Values (Full-factorial scan)
+There are 5 independent variables. The computation should be full-factorial:
+
+(1) Binder-to-aggregate ratio
+R = (Cement + Fly ash) / Coal gangue (mass ratio)
+R ∈ {0.3, 0.6, 0.9, 1.2}
+
+(2) Fly ash replacement ratio
+f_FA = Fly ash / (Cement + Fly ash) (mass ratio)
+f_FA ∈ {0, 0.1, 0.2, …, 1.0} (step 0.1, total 11 levels)
+
+(3) CO₂ concentration in gas phase
+yCO2 = volume fraction of CO₂ in the gas phase
+yCO2 ∈ {0%, 15%, 20%, 25%, 30%, 35%, 40%} (7 levels)
+Note: If using gas-phase partial pressure control, pCO2 can be set as pCO2 = yCO2 × 1 atm.
+
+(4) Sodium silicate dosage in total slurry mass
+w_SS = sodium silicate / total slurry mass (mass fraction)
+w_SS ∈ {2%, 3%, 4%, 5%} (step 1%)
+
+(5) Water-to-binder ratio
+w/b = Water / (Cement + Fly ash) (mass ratio)
+w/b ∈ {1.1, 1.4, 1.7, 2.0}
+
+- Total equilibrium calculation points:
+4 × 11 × 7 × 4 × 4 = 4928 cases
+
+3. Raw Material Chemical Composition Inputs (XRF, wt%)
+(Used to convert “mix design masses” into oxide/element moles as bulk inputs for GEMS)
+
+3.1 Coal gangue (XRF wt%)
+- SiO₂ 57.74
+- Al₂O₃ 20.58
+- Fe₂O₃ 4.31
+- CaO 0.20
+- MgO 1.00
+- K₂O 2.76
+
+3.2 Cement (XRF wt%)
+- SiO₂ 19.76
+- Al₂O₃ 11.47
+- Fe₂O₃ 0.50
+- CaO 45.63
+- MgO 6.27
+- SO₃ 13.68
+
+3.3 Fly ash (XRF wt%)
+- SiO₂ 52.61
+- Al₂O₃ 12.60
+- Fe₂O₃ 8.24
+- CaO 18.23
+- MgO 1.47
+- K₂O 1.44
+
+3.4 Sodium silicate (water glass) composition
+(Used to convert into added Na, Si, and H₂O)
+- Mr = 212.14
+- Na₂O content ≈ 29.2 wt% (range 28–30 wt%)
+- SiO₂ ≈ 29.2 wt%
+- H₂O ≈ 41.6 wt%
+- Na₂O/SiO₂ molar ratio ≈ 1.03
+
+3.5 XRD (data available for: coal gangue / fly ash / cement)
+- If XRD is intended for initializing “quantitative mineral phases / phase proportions”, please specify the required data format.
+Current file indicates XRD exists, but does not provide quantitative phase contents.
+
+4. Required Outputs (Deliverables)
+
+4.1 Stable phase list and amounts (required for every case)
+For each (R, f_FA, yCO2, w_SS, w/b):
+- Output: names of all stable solid mineral phases + their amounts (mass or moles)
+Example phases: calcite, C-S-H related phases, silica gel, etc. (subject to the available phases in the selected database)
+- Recommended output formats:
+- Master table (CSV/Excel): each row = one variable combination; columns = variables + each phase amount (mol, g, or mass fraction)
+- Or a “long-format” table: fields include (variables, phase name, amount, unit)
+
+4.2 Key phase diagrams (2D)
+A) Type A: Phase distribution map / phase stability region map (Phase map)
+- Fix one binder/aggregate ratio (at least R = 0.6)
+- X-axis: fly ash replacement f_FA
+- Y-axis: CO₂ concentration yCO2
+- Label the “dominant stable phase” at each grid point (dominance criterion must be stated, e.g., maximum solid mass fraction)
+- Use colors/symbols to draw phase region partition (phase stability regions)
+- If workload allows, generate additional maps for R = 0.3 / 0.9 / 1.2 for comparison (optional; prioritize completing R = 0.6)
+
+B) Type B: Ternary diagram
+- On a section with fixed CO₂ concentration and fixed binder/aggregate ratio
+- Ternary vertices: CaO–SiO₂–Al₂O₃ (normalized by oxide moles or mass)
+- Show: distribution of composition points and stable phase region partition
+(colored by phase assemblage class or dominant phase)
+- Must clarify in the write-up whether the ternary composition uses:
+“initial bulk composition” or “equilibrium solid bulk composition”
+(choose one; initial bulk is recommended for easier implementation)
+
+4.3 Product evolution trend plots (curves)
+- Curve set 1: Fix R + f_FA (and also fix w_SS and w/b), plot key products (at least calcite)
+amount/mass fraction vs yCO2
+- Curve set 2: Fix R + yCO2 (and also fix w_SS and w/b), plot key products
+amount/mass fraction vs f_FA
+- Besides calcite, 2–5 additional representative phases may be selected (based on results)
+
+4.4 Reaction-path simulations (2–3 representative mix designs)
+- Select 2–3 key mix designs (cover low/medium/high fly ash levels or cross phase boundaries;
+specific points to be proposed by the contractor and confirmed with me)
+- Perform “stepwise carbonation”:
+- Method: gradually increase CO₂ (e.g., stepwise increase pCO2 or stepwise add n(CO2))
+- Output: evolution curves of each phase amount vs reaction progress / CO₂ added
+- Goal: observe phase transformation sequence (appearance/disappearance intervals)
+
+5. Deliverable Formats (must be reproducible)
+- Data:
+- Summary table for 4928 equilibrium cases (CSV/Excel)
+- Reaction-path result tables for 2–3 cases (one record per step)
+- Figures:
+- Type A phase map (at least for R = 0.6)
+- Type B ternary diagram (at least one section)
+- Trend curves (at least calcite; multi-phase recommended)
+- Reaction-path curves (one set per representative mix design)
+- Reproducibility package:
+- GEMS / GEM-Selektor / CemGEMS project files (or equivalent input configurations)
+- Batch scripts / code (e.g., Python/Matlab) used for batch runs and plotting
+
+6. Key Implementation Conventions to State Clearly (in the final report)
+- Software version and thermodynamic database version used
+- How CO₂ boundary conditions are implemented (fixed gas pCO2 vs adding moles of CO₂)
+- Criterion for “dominant phase” (max mass fraction / max mole fraction / custom classification)
+- Composition convention for ternary plots (initial bulk vs equilibrium solid bulk)
+- Units and normalization basis for phase amounts (e.g., per 100 g binder, or per kg water, etc.)
+

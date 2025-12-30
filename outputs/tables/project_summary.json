@@ -1,0 +1,55 @@
+{
+  "project_name": "xGEMS Carbonation Equilibrium Modeling",
+  "completion_date": "2025-12-27",
+  "total_calculations": 4928,
+  "convergence_rate": 100.0,
+  "phases_identified": 5,
+  "phase_names": [
+    "C-S-H_1.0",
+    "Calcite",
+    "Ettringite",
+    "Hydrotalcite",
+    "Silica_gel"
+  ],
+  "independent_variables": 5,
+  "variable_levels": {
+    "R": 4,
+    "f_FA": 11,
+    "yCO2": 7,
+    "w_SS": 4,
+    "w_b": 4
+  },
+  "outputs": {
+    "datasets": 13,
+    "figures": 46,
+    "scripts": 29
+  },
+  "phase_occurrence": {
+    "C-S-H_1.0": {
+      "cases": 4928,
+      "percentage": 100.0
+    },
+    "Calcite": {
+      "cases": 4224,
+      "percentage": 85.71428571428571
+    },
+    "Ettringite": {
+      "cases": 4480,
+      "percentage": 90.9090909090909
+    },
+    "Hydrotalcite": {
+      "cases": 4928,
+      "percentage": 100.0
+    },
+    "Silica_gel": {
+      "cases": 4928,
+      "percentage": 100.0
+    }
+  },
+  "pH_range": {
+    "min": 8.5,
+    "max": 10.5,
+    "mean": 9.309598214285714,
+    "std": 0.6260690221388476
+  }
+}

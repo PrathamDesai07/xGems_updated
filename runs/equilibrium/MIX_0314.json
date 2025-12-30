@@ -1,0 +1,51 @@
+{
+  "converged": true,
+  "method": "simplified_thermodynamic_model",
+  "note": "Using simplified model until Cemdata18 integration complete",
+  "temperature_K": 298.15,
+  "pressure_bar": 1.01325,
+  "CO2_fraction": 0.35,
+  "pCO2_bar": 0.3546375,
+  "phases": {
+    "Calcite": {
+      "moles": 0.011757536417812499,
+      "mass_kg": 0.001176811820058853
+    },
+    "C-S-H_1.0": {
+      "moles": 0.2066013735821875,
+      "mass_kg": 0.035122233508971874
+    },
+    "Silica_gel": {
+      "moles": 0.9224983564178126,
+      "mass_kg": 0.05542370125358218
+    },
+    "Ettringite": {
+      "moles": 0.0068346,
+      "mass_kg": 0.008577422999999999
+    },
+    "Hydrotalcite": {
+      "moles": 0.019300623,
+      "mass_kg": 0.008550175989
+    }
+  },
+  "pH": 8.7268125,
+  "pe": 4.0,
+  "Eh": 0.24,
+  "system_mass_kg": 0.10885034557161291,
+  "input_composition": {
+    "Ca": 0.21835891,
+    "Si": 1.12909973,
+    "Al": 0.47250869,
+    "Fe": 0.06167519,
+    "Mg": 0.06433541,
+    "K": 0.06043569,
+    "Na": 0.07106182,
+    "S": 0.0410076,
+    "O": 6.38839431,
+    "H": 5.66186043,
+    "C": 0.01326147
+  },
+  "execution_time": 1.0967254638671875e-05,
+  "mix_id": "MIX_0314",
+  "input_file": "/teamspace/studios/this_studio/inputs/generated/MIX_0314.inp"
+}

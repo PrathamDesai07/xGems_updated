@@ -1,0 +1,312 @@
+Phase 1 — Environment & Toolchain Setup (Day 2–3)
+1.1 Software Installation
+
+Install XGems / GEM-Selektor kernel (no GUI components)
+
+Verify:
+
+Command-line execution works
+
+Database loads correctly
+
+1.2 Scripting Environment
+
+Python environment with:
+
+numpy
+
+pandas
+
+matplotlib
+
+python-ternary (or equivalent)
+
+1.3 Directory Structure
+project/
+│
+├── database/
+│   └── CemGEMS.dat
+│
+├── inputs/
+│   ├── templates/
+│   └── generated/
+│
+├── runs/
+│   ├── equilibrium/
+│   └── reaction_path/
+│
+├── outputs/
+│   ├── raw/
+│   ├── tables/
+│   └── figures/
+│
+├── scripts/
+│   ├── mix_design.py
+│   ├── gems_input_writer.py
+│   ├── run_xgems.py
+│   ├── parse_output.py
+│   └── plotting/
+│
+└── report/
+
+Phase 2 — Mix Design & Chemistry Engine (Day 3–5)
+2.1 Implement Mix Design Generator
+
+Python module to:
+
+Loop over:
+
+R
+
+f_FA
+
+yCO₂
+
+w_SS
+
+w/b
+
+Compute:
+
+Cement mass
+
+Fly ash mass
+
+Coal gangue mass
+
+Water mass
+
+Sodium silicate mass
+
+2.2 Oxide Conversion Engine
+
+For each raw material:
+
+Convert XRF wt% → oxide masses
+
+Convert oxide masses → moles
+
+Sum total system moles:
+
+CaO, SiO₂, Al₂O₃, Fe₂O₃, MgO, K₂O, Na₂O, SO₃, H₂O
+
+➡️ Output: Validated bulk composition per mix
+
+Phase 3 — XGems Input Automation (Day 5–7)
+3.1 XGems Input Template
+
+Create a minimal, reusable template:
+
+System definition
+
+Components
+
+Phases (solid + aqueous + gas)
+
+Temperature, pressure
+
+CO₂ gas phase definition
+
+3.2 Automated Input Writer
+
+Script generates:
+
+One XGems input file per mix design
+
+Correct gas composition:
+
+pCO₂ = yCO₂ × 1 atm
+
+Correct water amount (slurry condition)
+
+➡️ Output: 4,928 valid XGems input files
+
+Phase 4 — Batch Equilibrium Execution (Day 7–10)
+4.1 Batch Execution Controller
+
+Sequential or parallel execution (depending on hardware)
+
+Robust error handling:
+
+Non-convergence
+
+Phase suppression issues
+
+4.2 Output Capture
+
+Capture:
+
+Stable phases
+
+Phase amounts (mol / mass)
+
+Store raw outputs per run
+
+➡️ Output: 4,928 completed equilibrium calculations
+
+Phase 5 — Data Parsing & Master Dataset (Day 10–12)
+5.1 Output Parser
+
+Parse XGems output files into:
+
+Phase name
+
+Phase amount
+
+Phase type (solid / aqueous / gas)
+
+5.2 Master Table Construction
+
+Create:
+
+Wide format table:
+
+One row = one mix
+
+Columns = variables + phase amounts
+
+Long format table (optional):
+
+Easier plotting & classification
+
+➡️ Output: Master CSV/Excel dataset
+
+Phase 6 — Phase Diagram Generation (Day 12–15)
+6.1 Type A — Phase Stability Maps
+
+Fix R = 0.6 (minimum requirement)
+
+Build 2D grid:
+
+X = f_FA
+
+Y = yCO₂
+
+Assign dominant phase
+
+Plot phase regions
+
+(Optional: repeat for other R values)
+
+6.2 Type B — Ternary Diagrams
+
+Fix R and yCO₂
+
+Compute normalized CaO–SiO₂–Al₂O₃
+
+Plot ternary points
+
+Color by dominant phase / phase assemblage
+
+➡️ Output: Publication-quality phase diagrams
+
+Phase 7 — Product Evolution Trends (Day 15–17)
+7.1 CO₂-Driven Trends
+
+Fix:
+
+R
+
+f_FA
+
+w_SS
+
+w/b
+
+Plot:
+
+Calcite (mandatory)
+
+2–5 other representative phases
+
+Phase amount vs yCO₂
+
+7.2 Fly Ash-Driven Trends
+
+Fix:
+
+R
+
+yCO₂
+
+w_SS
+
+w/b
+
+Plot:
+
+Phase amount vs f_FA
+
+➡️ Output: Clear mechanistic trend plots
+
+Phase 8 — Reaction-Path Simulations (Day 17–20)
+8.1 Select Representative Mixes
+
+Choose 2–3 mixes:
+
+Low fly ash
+
+Medium fly ash
+
+High fly ash
+
+Preferably crossing phase boundaries
+
+8.2 Stepwise Carbonation
+
+For each mix:
+
+Incrementally add CO₂ (ΔnCO₂)
+
+Re-equilibrate after each step
+
+Record phase evolution
+
+8.3 Reaction-Path Analysis
+
+Identify:
+
+Phase appearance/disappearance
+
+Transformation sequence
+
+Carbonation thresholds
+
+➡️ Output: Reaction-path evolution curves
+
+Phase 9 — Validation & Sensitivity Checks (Day 20–21)
+
+Mass balance check
+
+Carbon balance check
+
+Convergence verification
+
+Physical plausibility review
+
+Phase 10 — Final Packaging & Documentation (Day 22–24)
+10.1 Deliverables
+
+Master dataset (CSV/Excel)
+
+Reaction-path tables
+
+Figures (all required plots)
+
+Scripts (clean, commented)
+
+XGems input templates
+
+10.2 Final Report
+
+Explicitly document:
+
+Database version
+
+CO₂ boundary conditions
+
+Phase dominance criteria
+
+Units & normalization
+
+Known limitations
