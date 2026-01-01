@@ -1,0 +1,105 @@
+{
+  "task": {
+    "name": "Carbonation equilibrium - MIX_2331",
+    "description": "Fly ash + cement + sodium silicate + coal gangue system",
+    "calculation_type": "equilibrium",
+    "database": "Cemdata18",
+    "database_version": "18.1"
+  },
+  "conditions": {
+    "temperature_K": 298.15,
+    "pressure_bar": 1.01325,
+    "pCO2_bar": 0.3546375
+  },
+  "mix_parameters": {
+    "R_binder_aggregate": 0.6,
+    "f_FA_replacement": 0.9,
+    "yCO2_volume_fraction": 0.35,
+    "w_SS_dosage": 0.04,
+    "w_b_ratio": 2.0
+  },
+  "system": {
+    "components": [
+      "Ca",
+      "Si",
+      "Al",
+      "Fe",
+      "Mg",
+      "K",
+      "Na",
+      "S",
+      "O",
+      "H",
+      "C"
+    ],
+    "component_amounts": {
+      "Ca": 0.1868435,
+      "Si": 1.64274202,
+      "Al": 0.52597279,
+      "Fe": 0.11836236,
+      "Mg": 0.01764822,
+      "K": 0.04082317,
+      "Na": 0.10992989,
+      "S": 0.0056107,
+      "O": 11.56145327,
+      "H": 13.97351175,
+      "C": 0.02051498
+    },
+    "component_units": "moles"
+  },
+  "phases": {
+    "enabled": [
+      "C3S",
+      "C2S",
+      "C3A",
+      "C4AF",
+      "Gypsum",
+      "Anhydrite",
+      "Portlandite",
+      "CSHQ_TobH",
+      "Ettringite",
+      "Monosulfoaluminate",
+      "Hydrotalcite",
+      "Hydrogarnet",
+      "NASH_gel",
+      "CNASH_gel",
+      "Calcite",
+      "Aragonite",
+      "Vaterite",
+      "Monocarboaluminate",
+      "SiO2am",
+      "Quartz",
+      "Kaolinite",
+      "Illite",
+      "Montmorillonite",
+      "Mullite",
+      "Magnetite",
+      "Hematite"
+    ],
+    "aqueous_solution": {
+      "enabled": true,
+      "name": "AqueousSolution"
+    },
+    "gas_phase": {
+      "enabled": true,
+      "composition": {
+        "CO2": 0.3546375,
+        "H2O_gas": 0.6586125
+      },
+      "units": "bar"
+    }
+  },
+  "solver": {
+    "method": "IPM",
+    "max_iterations": 500,
+    "tolerance": 1e-06,
+    "timeout_seconds": 300
+  },
+  "output": {
+    "phases": true,
+    "phase_amounts": true,
+    "aqueous_species": true,
+    "element_distribution": true,
+    "format": "json"
+  }
+}

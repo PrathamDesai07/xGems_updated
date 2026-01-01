@@ -216,6 +216,167 @@ class MixDesignGenerator:
         print(df.head(10).to_string(index=False))
         
         print("\n" + "=" * 80)
+    
+    def calculate_clinker_phase_masses(self, cement_mass, clinker_phases=None):
+        """
+        Convert cement mass to individual clinker phase masses.
+        
+        This uses Rietveld XRD data (or Bogue calculation results) to 
+        break down cement into its constituent phases (C3S, C2S, C3A, C4AF, etc.).
+        
+        Parameters:
+        -----------
+        cement_mass : float
+            Total cement mass (g)
+        clinker_phases : dict, optional
+            Dict of phase: weight_fraction. If None, uses config.CEMENT_PHASES
+            
+        Returns:
+        --------
+        dict : Phase name → mass (g)
+        """
+        if clinker_phases is None:
+            clinker_phases = config.CEMENT_PHASES
+        
+        phase_masses = {}
+        for phase, fraction in clinker_phases.items():
+            phase_masses[phase] = cement_mass * fraction
+        
+        return phase_masses
+    
+    def calculate_flyash_phase_masses(self, flyash_mass, flyash_phases=None):
+        """
+        Convert fly ash mass to phase masses (glass, quartz, mullite, etc.).
+        
+        This uses Rietveld XRD data (or mineralogical estimates) to 
+        break down fly ash into its constituent phases.
+        
+        Parameters:
+        -----------
+        flyash_mass : float
+            Total fly ash mass (g)
+        flyash_phases : dict, optional
+            Dict of phase: weight_fraction. If None, uses config.FLYASH_PHASES
+            
+        Returns:
+        --------
+        dict : Phase name → mass (g)
+        """
+        if flyash_phases is None:
+            flyash_phases = config.FLYASH_PHASES
+        
+        phase_masses = {}
+        for phase, fraction in flyash_phases.items():
+            phase_masses[phase] = flyash_mass * fraction
+        
+        return phase_masses
+    
+    def calculate_gangue_phase_masses(self, gangue_mass, gangue_phases=None):
+        """
+        Convert coal gangue mass to phase masses.
+        
+        This uses Rietveld XRD data (or mineralogical estimates) to 
+        break down coal gangue into its constituent phases (quartz, clays, etc.).
+        
+        Parameters:
+        -----------
+        gangue_mass : float
+            Total coal gangue mass (g)
+        gangue_phases : dict, optional
+            Dict of phase: weight_fraction. If None, uses config.GANGUE_PHASES
+            
+        Returns:
+        --------
+        dict : Phase name → mass (g)
+        """
+        if gangue_phases is None:
+            gangue_phases = config.GANGUE_PHASES
+        
+        phase_masses = {}
+        for phase, fraction in gangue_phases.items():
+            phase_masses[phase] = gangue_mass * fraction
+        
+        return phase_masses
+    
+    def generate_all_combinations_with_phases(self):
+        """
+        Generate all 4,928 mix design combinations WITH phase-based composition.
+        
+        This extends the basic mix design generator to include individual
+        phase masses for cement, fly ash, and coal gangue. This is required
+        for CemGEMS input generation.
+        
+        Returns:
+        --------
+        pandas.DataFrame : DataFrame with mix designs including phase masses
+        """
+        # Get all variable arrays from config
+        R_values = config.BINDER_AGGREGATE_RATIOS
+        f_FA_values = config.FLY_ASH_REPLACEMENT_RATIOS
+        yCO2_values = config.CO2_CONCENTRATIONS
+        w_SS_values = config.SODIUM_SILICATE_DOSAGES
+        w_b_values = config.WATER_BINDER_RATIOS
+        
+        # Generate all combinations
+        combinations = list(product(
+            R_values,
+            f_FA_values,
+            yCO2_values,
+            w_SS_values,
+            w_b_values
+        ))
+        
+        print(f"Generating {len(combinations)} mix designs with phase compositions...")
+        
+        # Create list to store results
+        mix_designs = []
+        
+        for idx, (R, f_FA, yCO2, w_SS, w_b) in enumerate(combinations):
+            # Calculate raw material masses
+            masses = self.calculate_raw_material_masses(R, f_FA, w_SS, w_b)
+            
+            # Calculate phase masses
+            cement_phases = self.calculate_clinker_phase_masses(masses['cement_mass_g'])
+            flyash_phases = self.calculate_flyash_phase_masses(masses['flyash_mass_g'])
+            gangue_phases = self.calculate_gangue_phase_masses(masses['gangue_mass_g'])
+            
+            # Create mix design record
+            mix_design = {
+                'mix_id': f'MIX_{idx:04d}',
+                'R': R,
+                'f_FA': f_FA,
+                'yCO2': yCO2,
+                'w_SS': w_SS,
+                'w_b': w_b,
+                # Total material masses
+                'cement_mass_g': masses['cement_mass_g'],
+                'flyash_mass_g': masses['flyash_mass_g'],
+                'gangue_mass_g': masses['gangue_mass_g'],
+                'water_mass_g': masses['water_mass_g'],
+                'sodium_silicate_mass_g': masses['sodium_silicate_mass_g'],
+                'total_mass_g': masses['total_mass_g'],
+            }
+            
+            # Add cement phase masses
+            for phase, mass in cement_phases.items():
+                mix_design[f'cement_{phase}_g'] = mass
+            
+            # Add fly ash phase masses
+            for phase, mass in flyash_phases.items():
+                mix_design[f'flyash_{phase}_g'] = mass
+            
+            # Add coal gangue phase masses
+            for phase, mass in gangue_phases.items():
+                mix_design[f'gangue_{phase}_g'] = mass
+            
+            mix_designs.append(mix_design)
+        
+        # Create DataFrame
+        df = pd.DataFrame(mix_designs)
+        
+        print(f"✓ Generated {len(df)} mix designs with phase compositions")
+        
+        return df
 
 
 def main():
@@ -228,21 +389,42 @@ def main():
     # Create generator
     generator = MixDesignGenerator()
     
-    # Generate all combinations
+    # Generate all combinations (original - XRF only)
     df_mix_designs = generator.generate_all_combinations()
     
     # Print summary
     generator.print_summary(df_mix_designs)
     
     # Save to CSV
-    generator.save_to_csv(df_mix_designs)
+    generator.save_to_csv(df_mix_designs, filename='mix_designs.csv')
+    
+    # Generate all combinations WITH phase compositions (NEW - for CemGEMS)
+    print("\n" + "=" * 80)
+    print("Generating phase-based mix designs for CemGEMS...")
+    print("=" * 80 + "\n")
+    
+    df_mix_designs_phases = generator.generate_all_combinations_with_phases()
+    
+    # Save phase-based mix designs
+    generator.save_to_csv(df_mix_designs_phases, filename='mix_designs_with_phases.csv')
+    
+    # Print sample of phase-based mix designs
+    print("\nSample phase-based mix designs (first 3):")
+    phase_cols = ['mix_id', 'R', 'f_FA', 'yCO2', 
+                  'cement_C3S_g', 'cement_C2S_g', 'cement_C3A_g',
+                  'flyash_Glass_g', 'flyash_Quartz_g', 
+                  'gangue_Quartz_g', 'gangue_Kaolinite_g']
+    if all(col in df_mix_designs_phases.columns for col in phase_cols):
+        print(df_mix_designs_phases[phase_cols].head(3).to_string(index=False))
     
     print("\n" + "=" * 80)
     print("Mix Design Generation: COMPLETE ✓")
+    print("  • Basic mix designs: mix_designs.csv")
+    print("  • Phase-based mix designs: mix_designs_with_phases.csv")
     print("=" * 80 + "\n")
     
-    return df_mix_designs
+    return df_mix_designs, df_mix_designs_phases
 
 
 if __name__ == '__main__':
-    df = main()
+    df, df_phases = main()

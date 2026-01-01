@@ -1,0 +1,20 @@
+CemGEMS Results Summary
+================================================================================
+
+Total mix designs: 10
+Converged: 9
+Failed: 1
+Convergence rate: 90.00%
+
+pH range: 12.04 - 12.87
+pH mean: 12.41
+pH median: 12.33
+
+Number of unique phases: 6
+Most common phases:
+  phase_Portlandite_mol                   :     9 ( 90.0%)
+  phase_CSH_TobH_mol                      :     9 ( 90.0%)
+  phase_Ettringite_mol                    :     9 ( 90.0%)
+  phase_Monosulfate_mol                   :     9 ( 90.0%)
+  phase_Calcite_mol                       :     9 ( 90.0%)
+  phase_Monocarboaluminate_mol            :     9 ( 90.0%)

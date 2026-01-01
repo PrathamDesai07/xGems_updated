@@ -1,0 +1,80 @@
+# CemGEMS Input File - TEMPLATE
+# Generated: 2025-12-31 20:22:24.735031
+#======================================================================
+
+[TASK]
+NAME = Carbonation equilibrium - TEMPLATE
+TYPE = equilibrium
+DATABASE = Cemdata18
+
+[CONDITIONS]
+TEMPERATURE = 298.15  # K
+PRESSURE = 1.013250  # bar
+PCO2 = 0.20265000  # bar
+
+[MIX_PARAMETERS]
+R = 0.60000000  # Binder/aggregate ratio
+f_FA = 0.50000000  # Fly ash replacement
+yCO2 = 0.20000000  # CO2 volume fraction
+w_SS = 0.03000000  # Sodium silicate dosage
+w_b = 1.40000000  # Water/binder ratio
+
+[BULK_COMPOSITION]
+# Element amounts in moles
+Al   =   4.0000000000e-01
+C    =   5.0000000000e-02
+Ca   =   1.0000000000e+00
+Fe   =   1.0000000000e-01
+H    =   8.0000000000e+00
+K    =   2.0000000000e-02
+Mg   =   5.0000000000e-02
+Na   =   8.0000000000e-02
+O    =   5.0000000000e+00
+S    =   1.5000000000e-01
+Si   =   1.5000000000e+00
+
+[PHASES]
+# Solid phases
+  C3S
+  C2S
+  C3A
+  C4AF
+  Gypsum
+  Anhydrite
+  Portlandite
+  CSHQ_TobH
+  Ettringite
+  Monosulfoaluminate
+  Hydrotalcite
+  Hydrogarnet
+  NASH_gel
+  CNASH_gel
+  Calcite
+  Aragonite
+  Vaterite
+  Monocarboaluminate
+  SiO2am
+  Quartz
+  Kaolinite
+  Illite
+  Montmorillonite
+  Mullite
+  Magnetite
+  Hematite
+
+# Aqueous solution
+  AqueousSolution
+
+# Gas phase
+  GasPhase
+    CO2 = 0.20265000 bar
+    H2O = 0.81060000 bar
+
+[SOLVER]
+METHOD = IPM
+MAX_ITERATIONS = 500
+TOLERANCE = 1.00e-06
+TIMEOUT = 300 seconds
+
+#======================================================================
+# End of input file

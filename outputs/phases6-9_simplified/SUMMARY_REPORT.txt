@@ -1,0 +1,14 @@
+PHASES 6-9 ANALYSIS SUMMARY
+================================================================================
+
+Total mix designs: 10
+Converged: 9 (90.0%)
+
+Dominant Phases:
+  CSH_TobH: 9 (90.0%)
+  Non-converged: 1 (10.0%)
+
+Visualizations generated: 2
+
+pH Range (converged): 12.04 - 12.87
+Average pH: 12.41

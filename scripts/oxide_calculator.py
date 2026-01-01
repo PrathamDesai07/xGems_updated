@@ -35,6 +35,7 @@ class OxideCalculator:
         self.oxide_masses = config.OXIDE_MOLAR_MASSES
         self.element_masses = config.ELEMENT_ATOMIC_MASSES
         self.conversion_factors = config.OXIDE_TO_ELEMENT_FACTORS
+        self.phase_stoichiometry = config.PHASE_STOICHIOMETRY
         
     def calculate_oxides_from_material(self, material_mass, material_composition):
         """
@@ -382,6 +383,233 @@ class OxideCalculator:
             'max_error_percent': max_error,
             'mean_error_percent': mean_error,
         }
+    
+    def phase_mass_to_element_moles(self, phase_name, phase_mass):
+        """
+        Convert phase mass to elemental moles.
+        
+        This is a key function for CemGEMS input generation. It converts
+        a single phase (with known stoichiometry) into its constituent
+        elemental composition.
+        
+        Parameters:
+        -----------
+        phase_name : str
+            Name of phase (must be in PHASE_STOICHIOMETRY)
+        phase_mass : float
+            Mass of phase (g)
+            
+        Returns:
+        --------
+        dict : Element → moles
+        
+        Example:
+        --------
+        >>> calc = OxideCalculator()
+        >>> calc.phase_mass_to_element_moles('C3S', 100.0)
+        {'Ca': 1.30, 'Si': 0.43, 'O': 2.17}  # Approximate values
+        """
+        if phase_name not in self.phase_stoichiometry:
+            # Phase not in stoichiometry database
+            # This might be an amorphous phase (like Glass or Amorphous)
+            # Return empty dict - these need to be handled via XRF composition
+            return {}
+        
+        stoich = self.phase_stoichiometry[phase_name]
+        
+        # Calculate phase molar mass (g/mol)
+        molar_mass = sum(
+            self.element_masses[elem] * count 
+            for elem, count in stoich.items()
+        )
+        
+        # Convert mass to moles of phase
+        phase_moles = phase_mass / molar_mass
+        
+        # Convert to element moles
+        element_moles = {}
+        for elem, count in stoich.items():
+            element_moles[elem] = phase_moles * count
+        
+        return element_moles
+    
+    def mix_design_to_bulk_composition_phases(self, mix_design_row):
+        """
+        Convert full mix design with phases to bulk elemental composition.
+        
+        This is the NEW method for CemGEMS input generation. Instead of using
+        XRF oxide data, it uses the actual phase compositions (from Rietveld XRD)
+        to calculate elemental mole fractions.
+        
+        Parameters:
+        -----------
+        mix_design_row : pandas.Series or dict
+            Row from mix_designs_with_phases DataFrame
+            
+        Returns:
+        --------
+        dict : Contains element moles, total mass, and metadata
+        
+        Example:
+        --------
+        Input row has columns like:
+            cement_C3S_g, cement_C2S_g, cement_C3A_g, ...
+            flyash_Glass_g, flyash_Quartz_g, flyash_Mullite_g, ...
+            gangue_Quartz_g, gangue_Kaolinite_g, ...
+            water_mass_g, sodium_silicate_mass_g
+        
+        Output:
+            {'Ca': 15.3, 'Si': 8.2, 'Al': 2.1, ...}  (all in moles)
+        """
+        
+        # Initialize total element moles
+        bulk_composition = {}
+        
+        # Track total mass for validation
+        total_solid_mass = 0.0
+        
+        # Process all phase columns in the mix design
+        # Phase columns follow pattern: material_phase_g
+        for col_name in mix_design_row.index:
+            if col_name.endswith('_g') and '_' in col_name:
+                # Extract material and phase name
+                parts = col_name.replace('_g', '').split('_', 1)
+                if len(parts) == 2:
+                    material, phase = parts
+                    phase_mass = mix_design_row[col_name]
+                    
+                    if phase_mass > 0:
+                        # Convert phase to element moles
+                        element_moles = self.phase_mass_to_element_moles(phase, phase_mass)
+                        
+                        # Add to bulk composition
+                        for element, moles in element_moles.items():
+                            bulk_composition[element] = bulk_composition.get(element, 0) + moles
+                        
+                        total_solid_mass += phase_mass
+        
+        # Handle amorphous phases (Glass, Amorphous) via XRF composition
+        # These don't have defined stoichiometry
+        
+        # 1. Fly ash glass (use XRF for fly ash)
+        if 'flyash_Glass_g' in mix_design_row.index:
+            glass_mass = mix_design_row['flyash_Glass_g']
+            if glass_mass > 0:
+                glass_oxides = self.calculate_oxides_from_material(
+                    glass_mass, config.FLY_ASH_COMPOSITION
+                )
+                glass_elements = self.calculate_elements_from_oxides(glass_oxides)
+                
+                # Convert to moles
+                for element, mass in glass_elements.items():
+                    moles = mass / self.element_masses[element]
+                    bulk_composition[element] = bulk_composition.get(element, 0) + moles
+        
+        # 2. Coal gangue amorphous (use XRF for gangue)
+        if 'gangue_Amorphous_g' in mix_design_row.index:
+            amorphous_mass = mix_design_row['gangue_Amorphous_g']
+            if amorphous_mass > 0:
+                amorphous_oxides = self.calculate_oxides_from_material(
+                    amorphous_mass, config.COAL_GANGUE_COMPOSITION
+                )
+                amorphous_elements = self.calculate_elements_from_oxides(amorphous_oxides)
+                
+                # Convert to moles
+                for element, mass in amorphous_elements.items():
+                    moles = mass / self.element_masses[element]
+                    bulk_composition[element] = bulk_composition.get(element, 0) + moles
+        
+        # 3. Water contribution
+        if 'water_mass_g' in mix_design_row.index:
+            water_mass = mix_design_row['water_mass_g']
+            if water_mass > 0:
+                water_elements = self.calculate_water_contribution(water_mass)
+                
+                for element, mass in water_elements.items():
+                    moles = mass / self.element_masses[element]
+                    bulk_composition[element] = bulk_composition.get(element, 0) + moles
+                
+                total_solid_mass += water_mass
+        
+        # 4. Sodium silicate contribution
+        if 'sodium_silicate_mass_g' in mix_design_row.index:
+            ss_mass = mix_design_row['sodium_silicate_mass_g']
+            if ss_mass > 0:
+                ss_elements = self.calculate_sodium_silicate_contribution(ss_mass)
+                
+                for element, mass in ss_elements.items():
+                    moles = mass / self.element_masses[element]
+                    bulk_composition[element] = bulk_composition.get(element, 0) + moles
+                
+                total_solid_mass += ss_mass
+        
+        # 5. CO₂ contribution (from gas phase)
+        if 'yCO2' in mix_design_row.index and 'total_mass_g' in mix_design_row.index:
+            yCO2 = mix_design_row['yCO2']
+            total_mass = mix_design_row['total_mass_g']
+            co2_elements, n_CO2 = self.calculate_co2_contribution(yCO2, total_mass)
+            
+            for element, mass in co2_elements.items():
+                moles = mass / self.element_masses[element]
+                bulk_composition[element] = bulk_composition.get(element, 0) + moles
+        else:
+            n_CO2 = 0.0
+        
+        return {
+            'element_moles': bulk_composition,
+            'total_solid_mass_g': total_solid_mass,
+            'CO2_moles': n_CO2,
+        }
+    
+    def process_all_mix_designs_phases(self, df_mix_designs_phases):
+        """
+        Process all phase-based mix designs to calculate compositions.
+        
+        This processes the output from generate_all_combinations_with_phases()
+        and creates CemGEMS-ready input data.
+        
+        Parameters:
+        -----------
+        df_mix_designs_phases : pandas.DataFrame
+            DataFrame with phase-based mix designs
+            
+        Returns:
+        --------
+        pandas.DataFrame : DataFrame with bulk elemental compositions
+        """
+        print(f"\nProcessing {len(df_mix_designs_phases)} phase-based mix designs...")
+        
+        compositions = []
+        
+        for idx, row in df_mix_designs_phases.iterrows():
+            comp = self.mix_design_to_bulk_composition_phases(row)
+            
+            # Create composition record
+            comp_record = {
+                'mix_id': row['mix_id'],
+            }
+            
+            # Add element moles
+            for element in config.SYSTEM_COMPONENTS:
+                comp_record[f'{element}_mol'] = comp['element_moles'].get(element, 0.0)
+            
+            # Add metadata
+            comp_record['total_solid_mass_g'] = comp['total_solid_mass_g']
+            comp_record['CO2_moles'] = comp['CO2_moles']
+            
+            compositions.append(comp_record)
+            
+            if (idx + 1) % 1000 == 0:
+                print(f"  Processed {idx + 1}/{len(df_mix_designs_phases)} mix designs...")
+        
+        df_compositions = pd.DataFrame(compositions)
+        
+        # Merge with original mix designs
+        df_full = df_mix_designs_phases.merge(df_compositions, on='mix_id', how='left')
+        
+        print(f"✓ Processed all {len(df_full)} phase-based mix designs")
+        
+        return df_full
 
 
 def main():
@@ -405,7 +633,7 @@ def main():
     # Create calculator
     calculator = OxideCalculator()
     
-    # Process all mix designs
+    # Process all mix designs (XRF-based - original method)
     df_full = calculator.process_all_mix_designs(df_mix_designs)
     
     # Validate mass balance
@@ -421,12 +649,73 @@ def main():
     sample_cols = ['mix_id', 'R', 'f_FA', 'yCO2', 'Ca_mol', 'Si_mol', 'Al_mol', 'C_mol', 'O_mol', 'H_mol']
     print(df_full[sample_cols].head(5).to_string(index=False))
     
+    # Now process phase-based mix designs (NEW - for CemGEMS)
+    mix_designs_phases_path = config.OUTPUTS_TABLES_DIR / 'mix_designs_with_phases.csv'
+    
+    if mix_designs_phases_path.exists():
+        print("\n" + "=" * 80)
+        print("Processing phase-based mix designs for CemGEMS...")
+        print("=" * 80 + "\n")
+        
+        print(f"Loading phase-based mix designs from: {mix_designs_phases_path}")
+        df_mix_designs_phases = pd.read_csv(mix_designs_phases_path)
+        print(f"✓ Loaded {len(df_mix_designs_phases)} phase-based mix designs")
+        
+        # Process phase-based compositions
+        df_full_phases = calculator.process_all_mix_designs_phases(df_mix_designs_phases)
+        
+        # Save phase-based dataset
+        output_path_phases = config.OUTPUTS_TABLES_DIR / 'mix_designs_phases_with_compositions.csv'
+        df_full_phases.to_csv(output_path_phases, index=False, float_format='%.8f')
+        print(f"\n✓ Saved phase-based dataset to: {output_path_phases}")
+        
+        # Print sample
+        print("\nSample phase-based compositions (first 5 mix designs):")
+        sample_cols_phases = ['mix_id', 'R', 'f_FA', 'yCO2', 
+                              'Ca_mol', 'Si_mol', 'Al_mol', 'C_mol', 'O_mol', 'H_mol']
+        print(df_full_phases[sample_cols_phases].head(5).to_string(index=False))
+        
+        # Compare XRF-based vs Phase-based for validation
+        print("\n" + "=" * 80)
+        print("Comparing XRF-based vs Phase-based Calculations")
+        print("=" * 80 + "\n")
+        
+        # Merge for comparison
+        df_compare = df_full[['mix_id', 'Ca_mol', 'Si_mol', 'Al_mol']].merge(
+            df_full_phases[['mix_id', 'Ca_mol', 'Si_mol', 'Al_mol']], 
+            on='mix_id', 
+            suffixes=('_xrf', '_phase')
+        )
+        
+        # Calculate differences
+        for elem in ['Ca', 'Si', 'Al']:
+            df_compare[f'{elem}_diff_pct'] = (
+                (df_compare[f'{elem}_mol_phase'] - df_compare[f'{elem}_mol_xrf']) / 
+                df_compare[f'{elem}_mol_xrf'] * 100.0
+            )
+        
+        print("Differences between XRF and Phase-based calculations:")
+        print(f"  Ca difference: {df_compare['Ca_diff_pct'].abs().mean():.2f}% (mean)")
+        print(f"  Si difference: {df_compare['Si_diff_pct'].abs().mean():.2f}% (mean)")
+        print(f"  Al difference: {df_compare['Al_diff_pct'].abs().mean():.2f}% (mean)")
+        
+        if df_compare[['Ca_diff_pct', 'Si_diff_pct', 'Al_diff_pct']].abs().max().max() < 5.0:
+            print("\n  ✓ Phase-based calculations agree with XRF-based (< 5% difference)")
+        else:
+            print("\n  ⚠ Significant differences detected - review phase compositions")
+    else:
+        print("\n⚠ Phase-based mix designs not found. Run mix_design_generator.py first.")
+        df_full_phases = None
+    
     print("\n" + "=" * 80)
     print("Oxide Calculation: COMPLETE ✓")
+    print("  • XRF-based compositions: mix_designs_with_compositions.csv")
+    if df_full_phases is not None:
+        print("  • Phase-based compositions: mix_designs_phases_with_compositions.csv")
     print("=" * 80 + "\n")
     
-    return df_full
+    return df_full, df_full_phases if df_full_phases is not None else None
 
 
 if __name__ == '__main__':
-    df = main()
+    df_xrf, df_phases = main()

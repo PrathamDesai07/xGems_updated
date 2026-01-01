@@ -1,0 +1,102 @@
+{
+  "task": {
+    "name": "Carbonation equilibrium - MIX_3248",
+    "description": "Fly ash + cement + sodium silicate + coal gangue system",
+    "calculation_type": "equilibrium",
+    "database": "Cemdata18",
+    "database_version": "18.1"
+  },
+  "conditions": {
+    "temperature_K": 298.15,
+    "pressure_bar": 1.01325,
+    "pCO2_bar": 0.0
+  },
+  "mix_parameters": {
+    "R_binder_aggregate": 0.9,
+    "f_FA_replacement": 0.7,
+    "yCO2_volume_fraction": 0.0,
+    "w_SS_dosage": 0.02,
+    "w_b_ratio": 1.1
+  },
+  "system": {
+    "components": [
+      "Ca",
+      "Si",
+      "Al",
+      "Fe",
+      "Mg",
+      "K",
+      "Na",
+      "S",
+      "O",
+      "H"
+    ],
+    "component_amounts": {
+      "Ca": 0.42377923,
+      "Si": 1.77038197,
+      "Al": 0.57588671,
+      "Fe": 0.13744019,
+      "Mg": 0.01997717,
+      "K": 0.04277551,
+      "Na": 0.05557388,
+      "S": 0.02524813,
+      "O": 11.02396295,
+      "H": 11.72070716
+    },
+    "component_units": "moles"
+  },
+  "phases": {
+    "enabled": [
+      "C3S",
+      "C2S",
+      "C3A",
+      "C4AF",
+      "Gypsum",
+      "Anhydrite",
+      "Portlandite",
+      "CSHQ_TobH",
+      "Ettringite",
+      "Monosulfoaluminate",
+      "Hydrotalcite",
+      "Hydrogarnet",
+      "NASH_gel",
+      "CNASH_gel",
+      "Calcite",
+      "Aragonite",
+      "Vaterite",
+      "Monocarboaluminate",
+      "SiO2am",
+      "Quartz",
+      "Kaolinite",
+      "Illite",
+      "Montmorillonite",
+      "Mullite",
+      "Magnetite",
+      "Hematite"
+    ],
+    "aqueous_solution": {
+      "enabled": true,
+      "name": "AqueousSolution"
+    },
+    "gas_phase": {
+      "enabled": true,
+      "composition": {
+        "H2O_gas": 1.01325
+      },
+      "units": "bar"
+    }
+  },
+  "solver": {
+    "method": "IPM",
+    "max_iterations": 500,
+    "tolerance": 1e-06,
+    "timeout_seconds": 300
+  },
+  "output": {
+    "phases": true,
+    "phase_amounts": true,
+    "aqueous_species": true,
+    "element_distribution": true,
+    "format": "json"
+  }
+}

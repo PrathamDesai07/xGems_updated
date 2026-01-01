@@ -225,15 +225,133 @@ LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 LOG_DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 
 # ============================================================================
-# GEMS/xGEMS CONFIGURATION
+# CEMGEMS/GEM-SELEKTOR CONFIGURATION
 # ============================================================================
-# Note: xGEMS is not installed. We will need to either:
-# 1. Install GEM-Selektor/xGEMS
-# 2. Use alternative thermodynamic modeling tools (e.g., PHREEQC, Reaktoro)
-# 3. Implement direct Gibbs energy minimization
 
-GEMS_EXECUTABLE = None  # To be configured after installation
-GEMS_DATABASE = CEMDATA_DIR  # Cemdata18.1 database directory
+# CemGEMS executable paths (to be configured after installation)
+CEMGEMS_EXECUTABLE = None  # Path to gems3k, GEMS, or cemgems executable
+CEMGEMS_WORKING_DIR = RUNS_DIR / "cemgems_temp"
+
+# Database configuration
+CEMDATA18_PATH = CEMDATA_DIR  # Current: Cemdata18.1_08-01-19
+CEMDATA20_PATH = PROJECT_ROOT / "database" / "Cemdata20"  # Target: Cemdata20
+DATABASE = "Cemdata18"  # Current database version
+DATABASE_VERSION = "18.1"
+TARGET_DATABASE = "Cemdata20"  # Required by client specifications
+
+# Phase selection for CemGEMS calculations
+ENABLED_PHASES = {
+    'cement': [
+        'C3S', 'C2S', 'C3A', 'C4AF',  # Clinker phases
+        'Gypsum', 'Anhydrite'          # Sulfate phases
+    ],
+    'hydration_products': [
+        'Portlandite',                  # Ca(OH)2
+        'CSHQ_TobH',                    # C-S-H model from Cemdata
+        'Ettringite', 'Monosulfoaluminate',  # AFt, AFm
+        'Hydrotalcite',                 # LDH (Layered Double Hydroxide)
+        'Hydrogarnet'                   # Siliceous hydrogarnet
+    ],
+    'alkali_activated': [
+        'NASH_gel',                     # N-A-S-H gel (Sodium-Aluminum-Silicate-Hydrate)
+        'CNASH_gel'                     # C-(N)-A-S-H gel (Calcium-(Sodium)-Aluminum-Silicate-Hydrate)
+    ],
+    'carbonation': [
+        'Calcite', 'Aragonite', 'Vaterite',  # CaCO3 polymorphs
+        'Monocarboaluminate'            # Carbonated AFm
+    ],
+    'silica': [
+        'SiO2am', 'Quartz'             # Amorphous and crystalline silica
+    ],
+    'clays': [
+        'Kaolinite', 'Illite',         # Clay minerals from coal gangue
+        'Montmorillonite'
+    ],
+    'fly_ash': [
+        'Mullite',                      # 3Al2O3·2SiO2
+        'Magnetite', 'Hematite'        # Iron oxides
+    ]
+}
+
+# Simulation mode configuration
+SIMULATION_MODE = 'coupled_hydration_carbonation'  # New requirement from README (2).md
+REACTION_PATH_ENABLED = True  # Incremental CO2 addition (stepwise)
+
+# Time-dependent parameters for hydration-carbonation coupling
+HYDRATION_TIME_STEPS = [0.1, 1, 7, 28, 90, 180, 365]  # days
+CARBONATION_TIME_STEPS = [0, 30, 60, 90, 180, 365]    # days
+
+# CemGEMS solver options
+CEMGEMS_SOLVER_OPTIONS = {
+    'max_iterations': 500,
+    'convergence_tolerance': 1e-6,
+    'gibbs_method': 'IPM',  # Interior Point Method
+    'timeout_seconds': 300   # 5 minutes per calculation
+}
+
+# ============================================================================
+# PHASE-BASED INPUT DATA (Rietveld XRD)
+# ============================================================================
+# These are standard compositions to be used if Rietveld XRD data unavailable
+# TODO: Replace with actual Rietveld XRD data when provided by client
+
+# Cement clinker phase composition (Bogue calculation from XRF)
+# Note: This is a belite-rich cement (64% C2S, 0% C3S) - unusual composition
+# Calculated using standard Bogue equations from XRF oxide data
+# Normalized to sum to exactly 1.0000
+CEMENT_PHASES = {
+    'C3S': 0.0000,      # Alite (Tricalcium silicate) - ABSENT in this cement!
+    'C2S': 0.6455,      # Belite (Dicalcium silicate) - DOMINANT phase
+    'C3A': 0.1618,      # Tricalcium aluminate
+    'C4AF': 0.0083,     # Tetracalcium aluminoferrite (Ferrite)
+    'Gypsum': 0.1610,   # Calcium sulfate dihydrate (from SO3)
+    'Periclase': 0.0234 # Free MgO
+}  # Total: 1.0000
+
+# Fly ash mineralogy (estimated from XRF data)
+# Based on Si/Al ratio and iron oxide content
+FLYASH_PHASES = {
+    'Glass': 0.7095,      # Amorphous aluminosilicate glass
+    'Quartz': 0.1223,     # Crystalline SiO2
+    'Mullite': 0.0652,    # 3Al2O3·2SiO2
+    'Magnetite': 0.0412,  # Fe3O4
+    'Hematite': 0.0618    # Fe2O3
+}
+
+# Coal gangue mineralogy (estimated from XRF data)
+# Based on Si/Al/K ratios typical of coal gangue
+# Normalized to sum to exactly 1.0000
+GANGUE_PHASES = {
+    'Quartz': 0.3506,       # SiO2 - crystalline
+    'Kaolinite': 0.3005,    # Al2Si2O5(OH)4 - clay mineral
+    'Illite': 0.1503,       # K-Al silicate - clay mineral
+    'Iron_oxides': 0.0506,  # Mixed Fe oxides
+    'Amorphous': 0.1480     # Amorphous/glassy phases (adjusted for exact 1.0)
+}  # Total: 1.0000
+
+# Phase stoichiometry for conversion to elemental composition
+PHASE_STOICHIOMETRY = {
+    # Cement clinker phases
+    'C3S': {'Ca': 3, 'Si': 1, 'O': 5},              # 3CaO·SiO2
+    'C2S': {'Ca': 2, 'Si': 1, 'O': 4},              # 2CaO·SiO2
+    'C3A': {'Ca': 3, 'Al': 2, 'O': 6},              # 3CaO·Al2O3
+    'C4AF': {'Ca': 4, 'Al': 2, 'Fe': 2, 'O': 10},   # 4CaO·Al2O3·Fe2O3
+    'Gypsum': {'Ca': 1, 'S': 1, 'O': 6, 'H': 4},    # CaSO4·2H2O
+    'Anhydrite': {'Ca': 1, 'S': 1, 'O': 4},         # CaSO4
+    
+    # Fly ash and gangue phases
+    'Quartz': {'Si': 1, 'O': 2},                    # SiO2
+    'Mullite': {'Al': 6, 'Si': 2, 'O': 13},         # 3Al2O3·2SiO2
+    'Magnetite': {'Fe': 3, 'O': 4},                 # Fe3O4
+    'Hematite': {'Fe': 2, 'O': 3},                  # Fe2O3
+    'Kaolinite': {'Al': 2, 'Si': 2, 'O': 9, 'H': 4}, # Al2Si2O5(OH)4
+    'Illite': {'K': 1, 'Al': 4, 'Si': 7, 'O': 24, 'H': 8},  # Approximate
+    
+    # Hydration products (for reference)
+    'Portlandite': {'Ca': 1, 'O': 2, 'H': 2},       # Ca(OH)2
+    'Ettringite': {'Ca': 6, 'Al': 2, 'S': 3, 'O': 38, 'H': 64},  # Ca6Al2(SO4)3(OH)12·26H2O
+    'Calcite': {'Ca': 1, 'C': 1, 'O': 3},           # CaCO3
+}
 
 # ============================================================================
 # VALIDATION TOLERANCES

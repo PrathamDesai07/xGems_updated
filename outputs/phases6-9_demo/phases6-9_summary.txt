@@ -1,0 +1,13 @@
+PHASE 6-9 ANALYSIS SUMMARY
+============================================================
+
+Total mix designs: 10
+Converged: 9 (90.0%)
+
+Dominant Phases:
+  Unknown: 10 (100.0%)
+
+Total assemblages identified: 4
+
+pH Range (converged cases): 12.04 - 12.87
+Average pH: 12.41
