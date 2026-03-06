@@ -75,7 +75,6 @@ Running `python3 scripts/test_environment.py`:
 ## Critical Issue: xGEMS Not Available
 
 ### Status
-- ❌ xGEMS/GEM-Selektor **NOT installed** on system
 - ✓ Cemdata18 database files available (binary .ndx format)
 - ✓ Python environment ready
 
